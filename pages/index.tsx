@@ -15,20 +15,9 @@ export default function Home() {
           <div className='flex gap-3 items-center'>
             <img
               loading='lazy'
-              src='/assets/teamdao/round-team-logo.png'
-              alt='logo'
-              className='w-12 h-12 block xl:hidden' />
-            <img
-              loading='lazy'
               src='/assets/teamdao/team-logo.png'
               alt='logo'
-              className='w-40 h-12 hidden xl:block' />
-            <Button
-              outline
-              touchRipple={false}
-              className='k-color-brand-teamdao-primary'>
-              Treasury 88,888
-            </Button>
+              className='w-40 h-12' />
           </div>
           <div className='flex justify-end items-center'>
             <Button tonal className='k-color-brand-teamdao-primary'>
