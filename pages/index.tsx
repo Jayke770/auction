@@ -46,17 +46,17 @@ export default function Home() {
 
       {/* hero */}
       <div className='flex px-3 xl:px-40'>
-        <div className='w-full flex flex-col xl:flex-row xl:justify-between'>
+        <div className='w-full flex flex-col lg:flex-row lg:justify-between'>
           {/* image */}
           <div className='px-10 w-full flex justify-center items-center'>
             <img
               loading='lazy'
               src='https://raw.githubusercontent.com/TEAMexchangeAdmin/TEAM-TOKEN-Logo/master/1111.png'
               alt='logo'
-              className='max-h-[85vh] w-full object-contain' />
+              className=' max-h-[60vh] xl:max-h-[85vh] w-full object-contain' />
           </div>
           {/* info */}
-          <div className='px-10 py-8 flex flex-col w-full'>
+          <div className='px-3 xl:px-10 py-3 xl:py-8 flex flex-col w-full'>
             <div className='flex flex-col gap-3'>
               <div className='flex gap-3 items-center'>
                 <div className='flex gap-1'>
@@ -76,16 +76,16 @@ export default function Home() {
                 </div>
                 <div className='font-semibold text-zinc-400'>November 19, 2022</div>
               </div>
-              <h1 className='text-6xl font-black text-zinc-300'>wPLAYER 1111</h1>
+              <h1 className='text-4xl lg:text-5xl xl:text-6xl font-black text-zinc-300'>wPLAYER 1111</h1>
             </div>
-            <div className='flex gap-10 mt-6'>
-              <div className='flex flex-col gap-1 border-r pr-10 border-zinc-400'>
-                <div className='font-bold text-lg text-zinc-400'>Current Bid</div>
-                <div className='text-3xl font-bold text-zinc-300'>18.9 KLAY</div>
+            <div className='flex flex-col xl:flex-row gap-2 xl:gap-10 mt-6'>
+              <div className='flex justify-between items-center xl:items-start lg:flex-col gap-1 xl:border-r xl:pr-10 xl:border-zinc-400'>
+                <div className='font-bold text-base xl:text-lg text-zinc-400'>Current Bid</div>
+                <div className='text-base xl:text-3xl font-bold text-zinc-300'>18.9 KLAY</div>
               </div>
-              <div className='flex flex-col gap-1'>
-                <div className='font-bold text-lg text-zinc-400'>Auctions ends in</div>
-                <div className='text-3xl font-bold text-zinc-300'>9h 31m 55s</div>
+              <div className='flex justify-between items-center xl:items-start lg:flex-col gap-1'>
+                <div className='font-bold text-base xl:text-lg text-zinc-400'>Auctions ends in</div>
+                <div className='text-base xl:text-3xl font-bold text-zinc-300'>9h 31m 55s</div>
               </div>
             </div>
             <div className='mt-6 flex items-center gap-2'>
