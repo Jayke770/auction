@@ -55,8 +55,7 @@ export default function AuctionCard({ next, prev, index, length, auction }: {
             setAuctionData(req.ok ? await req.json() : undefined)
         }
         get_auction_data()
-    }, [setAuctionData])
-    console.log(auctionData)
+    }, [auction.tokenid, setAuctionData])
     return (
         <div className='w-full flex flex-col lg:flex-row lg:justify-between'>
             {/* image */}
