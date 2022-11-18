@@ -1,16 +1,42 @@
+import 'swiper/css'
+import "swiper/css/navigation"
+import React, { useRef } from 'react'
 import { Page, Button } from 'konsta/react'
 import Head from 'next/head'
-import { BsArrowLeft, BsArrowRight } from 'react-icons/bs'
-import { } from '../lib'
+import { useEffect, useState } from 'react'
+import { ClientAuctions } from '../lib'
+import { Swiper as SwiperType, Navigation } from "swiper"
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { ClientAuctionCard } from '../components'
 const card = Array.from({ length: 3 })
+type Auctions = {
+  auctionid: string,
+  tokenid: number,
+  start: string,
+  end: string,
+  created: string,
+  createdby: string,
+  bidders: {
+    id: string,
+    amount: number,
+    created: string,
+    userid: string
+  }[]
+}[]
 export default function Home() {
+  const swiperRef = useRef<SwiperType>()
+  const { auctions, auctionssLoading, auctionsError }: { auctions: Auctions, auctionssLoading: boolean, auctionsError: boolean } = ClientAuctions()
+  const [auctionsData, setAuctionsData] = useState<Auctions>()
+  const next = (): void => swiperRef.current?.slideNext()
+  const prev = (): void => swiperRef.current?.slidePrev()
+  useEffect(() => setAuctionsData(auctions), [auctions, setAuctionsData])
   return (
     <Page>
       <Head>
         <title>TEAMDAO AUCTION</title>
       </Head>
       {/* nav */}
-      <nav className='flex w-full py-2 px-4 xl:px-40 xl:py-8'>
+      <nav className='flex w-full py-2 px-4 xl:px-40 xl:py-7'>
         <div className='w-full flex  justify-between'>
           <div className='flex gap-3 items-center'>
             <img
@@ -34,75 +60,29 @@ export default function Home() {
       </nav>
 
       {/* hero */}
-      <div className='flex px-3 xl:px-40'>
-        <div className='w-full flex flex-col lg:flex-row lg:justify-between'>
-          {/* image */}
-          <div className='px-10 w-full flex justify-center items-center'>
-            <img
-              loading='lazy'
-              src='https://raw.githubusercontent.com/TEAMexchangeAdmin/TEAM-TOKEN-Logo/master/1111.png'
-              alt='logo'
-              className=' max-h-[60vh] xl:max-h-[85vh] w-full object-contain' />
-          </div>
-          {/* info */}
-          <div className='px-3 xl:px-10 py-3 xl:py-8 flex flex-col w-full'>
-            <div className='flex flex-col gap-3'>
-              <div className='flex gap-3 items-center'>
-                <div className='flex gap-1'>
-                  <Button
-                    rounded
-                    className='!w-auto'
-                    small>
-                    <BsArrowLeft />
-                  </Button>
-                  <Button
-                    rounded
-                    className='!w-auto'
-                    small
-                    disabled>
-                    <BsArrowRight />
-                  </Button>
-                </div>
-                <div className='font-semibold text-zinc-400'>November 19, 2022</div>
-              </div>
-              <h1 className='text-4xl lg:text-5xl xl:text-6xl font-black text-zinc-300'>wPLAYER 1111</h1>
-            </div>
-            <div className='flex flex-col xl:flex-row gap-2 xl:gap-10 mt-6'>
-              <div className='flex justify-between items-center xl:items-start lg:flex-col gap-1 xl:border-r xl:pr-10 xl:border-zinc-400'>
-                <div className='font-bold text-base xl:text-lg text-zinc-400'>Current Bid</div>
-                <div className='text-base xl:text-3xl font-bold text-zinc-300'>18.9 KLAY</div>
-              </div>
-              <div className='flex justify-between items-center xl:items-start lg:flex-col gap-1'>
-                <div className='font-bold text-base xl:text-lg text-zinc-400'>Auctions ends in</div>
-                <div className='text-base xl:text-3xl font-bold text-zinc-300'>9h 31m 55s</div>
-              </div>
-            </div>
-            <div className='mt-6 flex items-center gap-2'>
-              <input
-                placeholder='100 or more'
-                className='w-full p-3 placeholder:text-zinc-500 rounded-lg outline-none transition-all border-none focus:ring-1 bg-zinc-800 focus:ring-brand-teamdao-primary/80 text-xl font-bold text-zinc-300' />
-              <Button
-                className='k-color-brand-teamdao-primary w-40 !font-bold'>Place Bid</Button>
-            </div>
-            <div className='flex flex-col mt-6 gap-2'>
-              {card.map((_, i) => (
-                <div key={i} className='flex justify-between py-2 px-2.5 border-b-[.1px] border-brand-teamdao-primary/20 '>
-                  <div className='flex items-center gap-1.5'>
-                    <img
-                      src='/assets/teamdao/round-team-logo.png'
-                      alt='logo'
-                      className='w-10 h-10 object-cover' />
-                    <div className='text-zinc-300 font-bold'>Jhon Doe</div>
-                  </div>
-                  <div className='flex items-center font-medium '>
-                    100 KLAY
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </Page>
+      {auctionsData ? (
+        auctionsData.length > 0 ? (
+          <Swiper
+            modules={[Navigation]}
+            className='mySwiper flex px-3 xl:px-40 !w-full !h-auto'
+            slidesPerView={1}
+            onBeforeInit={(swiper) => {
+              swiperRef.current = swiper
+            }}>
+            {auctionsData.map((auction, i) => (
+              <SwiperSlide key={i} >
+                <ClientAuctionCard
+                  next={next}
+                  prev={prev}
+                  auction={auction}
+                  length={auctionsData.length}
+                  index={i} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : null
+      ) : null
+      }
+    </Page >
   )
 }
