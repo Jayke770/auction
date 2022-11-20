@@ -25,9 +25,10 @@ export default function Navbar() {
             }]
         })
     }
+    //@ts-nocheck
     useEffect(() => {
         if (localStorage.getItem('wallet') === '1') _connect()
-    }, [])
+    }, [_connect])
     return (
         <nav className='flex w-full py-2 px-4 xl:px-40 xl:py-7'>
             <div className='w-full flex  justify-between'>

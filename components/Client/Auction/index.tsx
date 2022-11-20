@@ -88,7 +88,7 @@ export default function AuctionCard({ next, prev, index, length, auction }: {
                 highest_bid = bidder.amount
             }
         })
-    }, [])
+    }, [auction.bidders])
     return (
         auctionData ? (
             <div className='animate__animated animate__fadeIn w-full flex flex-col py-5 lg:flex-row lg:justify-between'>
