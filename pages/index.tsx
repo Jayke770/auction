@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { ClientAuctions } from '../lib'
 import { Swiper as SwiperType, Navigation } from "swiper"
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { ClientAuctionCard } from '../components'
+import { ClientAuctionCard, ClientAuctionLoader, ClientNavbar } from '../components'
 const card = Array.from({ length: 3 })
 type Auctions = {
   auctionid: string,
@@ -36,29 +36,7 @@ export default function Home() {
         <title>TEAMDAO AUCTION</title>
       </Head>
       {/* nav */}
-      <nav className='flex w-full py-2 px-4 xl:px-40 xl:py-7'>
-        <div className='w-full flex  justify-between'>
-          <div className='flex gap-3 items-center'>
-            <img
-              loading='lazy'
-              src='/assets/teamdao/team-logo.png'
-              alt='logo'
-              className='w-40 h-12' />
-          </div>
-          <div className='flex justify-end items-center'>
-            <Button tonal className='k-color-brand-teamdao-primary'>
-              <div className='flex gap-2 items-center -mx-2'>
-                <img
-                  src='/assets/teamdao/round-team-logo.png'
-                  alt='logo'
-                  className='w-10 h-10 object-cover' />
-                <span>0x43...3F6E</span>
-              </div>
-            </Button>
-          </div>
-        </div>
-      </nav>
-
+      <ClientNavbar />
       {/* hero */}
       {auctionsData ? (
         auctionsData.length > 0 ? (
@@ -81,7 +59,7 @@ export default function Home() {
             ))}
           </Swiper>
         ) : null
-      ) : null
+      ) : <ClientAuctionLoader />
       }
     </Page >
   )
