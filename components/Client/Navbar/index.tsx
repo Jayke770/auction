@@ -11,7 +11,10 @@ export default function Navbar() {
         await _change_network()
         await activate(ClientWeb3Connectors.injected).then(() => localStorage.setItem('wallet', '1'))
     }
-    const _disconnect = (): void => deactivate()
+    const _disconnect = (): void => {
+        deactivate()
+        localStorage.setItem('wallet', '0')
+    }
     const _change_network = async () => {
         //@ts-ignore
         await window.ethereum.request({
