@@ -1,29 +1,13 @@
 import { useWeb3React } from "@web3-react/core"
-import { Button, List, ListItem, Popover } from "konsta/react"
-import { Web3Connectors, Web3Contract } from '../../../lib'
-import Web3 from 'web3'
-import { useEffect, useRef, useState } from "react"
-interface Auctions {
-    amount: string
-    end: string,
-    highest_bid_address: string,
-    highest_bid_amount: string,
-    isDone: boolean,
-    start: string,
-    tokenid: string
-}
-export default function Navbar() {
+import { NavbarBackLink, Button, Navbar, Popover, List, ListItem } from "konsta/react"
+import NextLink from 'next/link'
+import { useRef, useState, useEffect } from "react"
+import type Web3 from "web3"
+import { Web3Connectors } from "../../../lib"
+export default function _Navbar() {
     const walletRef = useRef(null)
     const [walletInfo, setWalletInfo] = useState(false)
-    const { activate, deactivate, active, account, library, chainId } = useWeb3React()
-    const _connect = async (): Promise<void> => {
-        await _change_network()
-        await activate(Web3Connectors.injected).then(() => localStorage.setItem('wallet', '1'))
-    }
-    const _disconnect = (): void => {
-        deactivate()
-        localStorage.setItem('wallet', '0')
-    }
+    const { account, library, activate, active, deactivate } = useWeb3React()
     const _change_network = async () => {
         //@ts-ignore
         await window.ethereum.request({
@@ -37,21 +21,30 @@ export default function Navbar() {
             }]
         })
     }
+    const _connect = async (): Promise<void> => {
+        await _change_network()
+        await activate(Web3Connectors.injected).then(() => localStorage.setItem('wallet', '1'))
+    }
+    const _disconnect = (): void => {
+        deactivate()
+        localStorage.setItem('wallet', '0')
+    }
     //@ts-nocheck
     useEffect(() => {
         if (localStorage.getItem('wallet') === '1') _connect()
     }, [])
     return (
-        <nav className='flex w-full py-2 px-4 xl:px-40 xl:py-7'>
-            <div className='w-full flex  justify-between'>
-                <div className='flex gap-3 items-center'>
-                    <img
-                        loading='lazy'
-                        src='/assets/teamdao/team-logo.png'
-                        alt='logo'
-                        className='w-40 h-12' />
-                </div>
-                <div className='flex justify-end items-center'>
+        <Navbar
+            medium
+            translucent
+            title="Auction Items"
+            left={
+                <NextLink href={'/control'}>
+                    <NavbarBackLink />
+                </NextLink>
+            }
+            right={
+                <>
                     {active ? (
                         <button
                             ref={walletRef}
@@ -92,8 +85,7 @@ export default function Navbar() {
                                 title="Disconnect Wallet" />
                         </List>
                     </Popover>
-                </div>
-            </div>
-        </nav>
+                </>
+            } />
     )
 }

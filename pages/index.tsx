@@ -4,32 +4,49 @@ import React, { useRef } from 'react'
 import { Page, Button } from 'konsta/react'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { ClientAuctions } from '../lib'
+import { ClientAuctions, Web3Contract } from '../lib'
 import { Swiper as SwiperType, Navigation } from "swiper"
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { ClientAuctionCard, ClientAuctionLoader, ClientNavbar } from '../components'
+import { useWeb3React } from '@web3-react/core'
+import type Web3 from 'web3'
 const card = Array.from({ length: 3 })
-type Auctions = {
-  auctionid: string,
-  tokenid: number,
-  start: string,
+interface Auctions {
+  amount: string
   end: string,
-  created: string,
-  createdby: string,
-  bidders: {
-    id: string,
-    amount: number,
-    created: string,
-    userid: string
-  }[]
-}[]
+  highest_bid_address: string,
+  highest_bid_amount: string,
+  isDone: boolean,
+  start: string,
+  tokenid: string
+}
 export default function Home() {
+  const { activate, deactivate, active, account, library, chainId } = useWeb3React()
   const swiperRef = useRef<SwiperType>()
-  const { auctions, auctionssLoading, auctionsError }: { auctions: Auctions, auctionssLoading: boolean, auctionsError: boolean } = ClientAuctions()
-  const [auctionsData, setAuctionsData] = useState<Auctions>()
+  const [auctionsData, setAuctionsData] = useState<Auctions[]>()
   const next = (): void => swiperRef.current?.slideNext()
   const prev = (): void => swiperRef.current?.slidePrev()
-  useEffect(() => setAuctionsData(auctions), [auctions, setAuctionsData])
+  const get_auctions = async (): Promise<void> => {
+    const we3js: Web3 = library
+    //@ts-ignore 
+    const contract = new we3js.eth.Contract(Web3Contract.abi, Web3Contract.address)
+    const AUCTIONS: Auctions[] = await contract.methods.AuctionsData().call()
+    const DATA = AUCTIONS.map((x) => {
+      return {
+        amount: x.amount,
+        end: x.end,
+        highest_bid_address: x.highest_bid_address,
+        highest_bid_amount: x.highest_bid_amount,
+        isDone: x.isDone,
+        start: x.start,
+        tokenid: x.tokenid
+      }
+    })
+    setAuctionsData(DATA)
+  }
+  useEffect(() => {
+    if (active) get_auctions()
+  }, [active])
   return (
     <Page>
       <Head>

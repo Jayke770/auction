@@ -1,15 +1,17 @@
 import { Button, Card, Fab, List, ListItem, Navbar, NavbarBackLink, Page, Popover, Radio, Popup, Segmented, SegmentedButton } from "konsta/react"
 import Head from 'next/head'
-import { FaChevronDown } from "react-icons/fa"
+import { FaChevronDown, FaRegArrowAltCircleRight } from "react-icons/fa"
 import NextLink from 'next/link'
-import { config, Swal, ControlAuctions } from '../../../lib'
-import { useEffect, useState } from "react"
+import { config, Swal, Web3Contract } from '../../../lib'
+import { ControlNavbar } from '../../../components'
+import { useEffect, useState, useRef } from "react"
 import { MdAdd } from 'react-icons/md'
 //@ts-ignore
 import Flatpickr from "react-flatpickr"
 import "flatpickr/dist/themes/dark.css"
 import moment from "moment"
-const card = Array.from({ length: 10 })
+import { useWeb3React } from '@web3-react/core'
+import type Web3 from 'web3'
 interface Sort {
     opened?: boolean,
     type?: 'sold' | 'default' | 'not sold'
@@ -18,8 +20,8 @@ interface Auction {
     opened?: boolean,
     tab: 'info' | 'preview',
     tokenid?: number,
-    start?: string,
-    end?: string,
+    start?: number,
+    end?: number,
     data: {
         status?: boolean,
         name?: string,
@@ -56,7 +58,49 @@ type Auctions = {
         userid: string
     }[]
 }[]
+interface MintResponse {
+    blockHash: string,
+    blockNumber: number,
+    contractAddress: string,
+    cumulativeGasUsed: number,
+    effectiveGasPrice: number,
+    events: {
+        Transfer: {
+            address: string,
+            blockHash: string,
+            blockNumber: number
+            event: string,
+            id: string
+            logIndex: number,
+            raw: {
+                data: string,
+                topics: string[]
+            },
+            removed: boolean,
+            returnValues: {
+                0: string,
+                1: string,
+                2: string,
+                from: string,
+                to: string,
+                tokenId: string,
+            },
+            signature: string,
+            transactionHash: string,
+            transactionIndex: 2
+        }
+    },
+    from: string,
+    gasUsed: number
+    logsBloom: string,
+    status: boolean,
+    to: string,
+    transactionHash: string,
+    transactionIndex: number,
+    type: string
+}
 export default function Items() {
+    const { account, library, activate, active, deactivate } = useWeb3React()
     const [sort, setSort] = useState<Sort>({
         opened: false,
         type: 'default'
@@ -69,94 +113,81 @@ export default function Items() {
         end: undefined,
         data: {}
     })
-    const { auctions, auctionssLoading, auctionsError }: { auctions: Auctions, auctionssLoading: boolean, auctionsError: boolean } = ControlAuctions()
     const [auctionsData, setAuctionsData] = useState<Auctions>()
     const _save_auction = (): void => {
-        Swal.fire({
-            icon: 'question',
-            titleText: 'New Auction',
-            text: 'Are you sure you want to save this new auction?',
-            backdrop: true,
-            allowOutsideClick: false,
-            confirmButtonText: 'Save',
-            showDenyButton: true,
-            denyButtonText: 'Cancel',
-            reverseButtons: true
-        }).then((a) => {
-            if (a.isConfirmed) {
-                Swal.fire({
-                    icon: 'info',
-                    titleText: 'Saving New Auction',
-                    text: 'Please wait...',
-                    showConfirmButton: false,
-                    backdrop: true,
-                    allowOutsideClick: false,
-                    willOpen: async (): Promise<void> => {
-                        Swal.showLoading(Swal.getConfirmButton())
-                        try {
-                            await fetch('/api/control/auctions/new-auction', {
-                                method: 'post',
-                                headers: {
-                                    'content-type': 'application/json'
-                                },
-                                body: JSON.stringify({ tokenid: auction?.tokenid, start: auction?.start, end: auction?.end })
-                            }).then(async (req) => {
-                                if (req.ok) {
-                                    const res: { status?: boolean, title?: string, message?: string } = await req.json()
-                                    Swal.fire({
-                                        icon: res?.status ? 'success' : 'info',
-                                        titleText: res?.title,
-                                        text: res?.message,
-                                        backdrop: true,
-                                        allowOutsideClick: false
-                                    }).then(() => {
-                                        if (res?.status) {
-                                            setAuction({
-                                                opened: false,
-                                                tab: 'info',
-                                                tokenid: undefined,
-                                                start: undefined,
-                                                end: undefined,
-                                                data: {}
-                                            })
-                                        }
-                                    })
-                                } else {
-                                    throw new Error(`${req.status} ${req.statusText}`)
-                                }
-                            }).catch((e: Error) => {
-                                throw new Error(e.message)
-                            })
-                        } catch (e: any) {
-                            Swal.fire({
-                                icon: 'error',
-                                titleText: 'Connection Error',
-                                text: e.message,
-                                backdrop: true,
-                                allowOutsideClick: false,
+        if (auction?.end && auction?.start && auction?.tokenid) {
+            Swal.fire({
+                icon: 'question',
+                titleText: 'New Auction',
+                text: 'Are you sure you want to save this new auction?',
+                backdrop: true,
+                allowOutsideClick: false,
+                confirmButtonText: 'Save',
+                showDenyButton: true,
+                denyButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((a) => {
+                if (a.isConfirmed) {
+                    Swal.fire({
+                        icon: 'info',
+                        titleText: 'Saving New Auction',
+                        text: 'Please wait...',
+                        showConfirmButton: false,
+                        backdrop: true,
+                        allowOutsideClick: false,
+                        willOpen: async (): Promise<void> => {
+                            Swal.showLoading(Swal.getConfirmButton())
+                            const we3js: Web3 = library
+                            //@ts-ignore
+                            const contract = new we3js.eth.Contract(Web3Contract.abi, Web3Contract.address)
+                            await contract.methods.addAuction(moment(auction?.start).unix(), moment(auction?.end).unix(), auction?.tokenid, config.tokenuri(auction?.tokenid)).send({ from: account }).then((res: MintResponse) => {
+                                Swal.fire({
+                                    icon: res.status ? 'success' : 'info',
+                                    titleText: res.status ? 'Transaction Completed' : 'Transaction Not Completed',
+                                    text: res.status ? 'Auction Successfully Saved' : 'Auction Successfully Not Saved',
+                                    backdrop: true,
+                                    allowOutsideClick: false,
+                                }).then(() => {
+                                    if (res.status) {
+                                        setAuction({
+                                            opened: false,
+                                            tab: 'info',
+                                            tokenid: undefined,
+                                            start: undefined,
+                                            end: undefined,
+                                            data: {}
+                                        })
+                                    }
+                                })
+                            }).catch((e: any) => {
+                                Swal.fire({
+                                    icon: 'error',
+                                    titleText: 'Something Went Wrong',
+                                    text: e.message,
+                                    backdrop: true,
+                                    allowOutsideClick: false,
+                                })
                             })
                         }
-                    }
-                })
-            }
-        })
+                    })
+                }
+            })
+        }
     }
-    useEffect(() => setAuctionsData(auctions), [auctions, setAuctionsData])
+    const _check = async (): Promise<void> => {
+        const start = 1669000128, end = 1669086528
+        const we3js: Web3 = library
+        //@ts-ignore
+        const contract = new we3js.eth.Contract(Web3Contract.abi, Web3Contract.address)
+        await contract.methods.addAuction(start, end, 1, config.tokenuri(1112)).send({ from: account })
+    }
     return (
         <Page>
             <Head>
                 <title>Auction Control Panel</title>
             </Head>
             {/* navbar */}
-            <Navbar
-                medium
-                translucent
-                title="Auction Items"
-                left={
-                    <NextLink href={'/control'}>
-                        <NavbarBackLink />
-                    </NextLink>
-                } />
+            <ControlNavbar />
             {/* fab */}
             <Fab
                 onClick={() => setAuction({ ...auction, opened: true })}
@@ -219,7 +250,7 @@ export default function Items() {
                         </List>
                     </Popover>
                 </div>
-                {auctionsData ? (
+                {active && auctionsData ? (
                     auctionsData.length > 0 ? (
                         auctionsData.map((auction, i) => (
                             <Card
@@ -255,6 +286,7 @@ export default function Items() {
             {/* create new auction */}
             <Popup
                 opened={auction?.opened}
+                onBackdropClick={() => setAuction({ ...auction, opened: false })}
                 size="w-screen h-screen md:w-160 md:h-[95vh]">
                 <Page>
                     <Navbar
@@ -307,7 +339,6 @@ export default function Items() {
                                                 minDate: new Date(),
                                                 defaultHour: 24
                                             }}
-                                            value={auction?.start}
                                             placeholder="eg. 2022-11-24 11:02"
                                             onChange={([date]: any[]) => setAuction({ ...auction, start: date })} />
                                     </div>
@@ -317,8 +348,9 @@ export default function Items() {
                                             className="w-full cursor-pointer p-3 placeholder:text-zinc-500 rounded-lg outline-none transition-all border-none focus:ring-1 bg-md-dark-surface-5 focus:ring-brand-teamdao-primary/80 text-base font-semibold text-zinc-300"
                                             data-enable-time
                                             disabled={!auction?.start}
-                                            options={{ minDate: auction?.start }}
-                                            value={auction?.end}
+                                            options={{
+                                                minDate: auction?.start
+                                            }}
                                             placeholder="eg. 2022-11-24 11:02"
                                             onChange={([date]: any[]) => setAuction({ ...auction, end: date })} />
                                     </div>
@@ -348,15 +380,14 @@ export default function Items() {
                             </Card>
                         )}
                     </div>
-                    {auction?.end && auction?.start && auction?.tokenid ? (
-                        <div className="animate__animated animate__fadeInUp ms-300 p-5 absolute bottom-0 w-full">
-                            <Button
-                                onClick={_save_auction}
-                                className=" k-color-brand-teamdao-primary">
-                                <span className="font-bold text-base text-black">Save Auction</span>
-                            </Button>
-                        </div>
-                    ) : null}
+                    <div className="animate__animated animate__fadeInUp ms-300 p-5 absolute bottom-0 w-full">
+                        <Button
+                            disabled={!(auction?.end && auction?.start && auction?.tokenid)}
+                            onClick={_save_auction}
+                            className=" k-color-brand-teamdao-primary">
+                            <span className="font-bold text-base text-black">Save Auction</span>
+                        </Button>
+                    </div>
                 </Page>
             </Popup>
         </Page >
