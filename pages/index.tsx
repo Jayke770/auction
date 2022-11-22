@@ -84,8 +84,8 @@ export default function Home() {
             <img
               alt='metamask'
               src="/assets/icons/metamask.png"
-              className='h-52 w-full object-contain' />
-            <h1 className='text-xl font-teamdao text-teamdao-primary tracking-[.50rem] break-words'>Connect Your Wallet</h1>
+              className='animate__animated animate__fadeInDown ms-300 h-52 w-full object-contain' />
+            <h1 className='animate__animated animate__fadeInUp ms-300  text-xl font-teamdao text-teamdao-primary tracking-[.50rem] break-words'>Connect Your Wallet</h1>
           </div>
         </div>
       )}
