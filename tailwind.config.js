@@ -17,6 +17,9 @@ module.exports = konstaConfig({
       colors: {
         'teamdao-primary': '#2afe30',
         'teamdao-secondary': '#1b8520',
+      },
+      fontFamily: {
+        'teamdao': ['teamdao']
       }
     },
   },

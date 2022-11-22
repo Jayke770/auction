@@ -2,6 +2,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@font-face {
+    font-family: 'teamdao';
+    src: url('/assets/fonts/TEAMDAO-Regular.otf');
+}
+#logo-container > svg:nth-child(1) {
+    @apply hidden;
+}
+#logo-container > svg:nth-child(2) {
+    @apply !w-full !h-60;
+}
 /* Sweetalert */
 .swal2-popup,
 .swal2-popup.swal2-toast {

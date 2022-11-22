@@ -987,6 +987,14 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
+"@metamask/logo@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@metamask/logo/-/logo-3.1.1.tgz#0a40bcfc462a70aa2110efc737767ca7ba188fa3"
+  integrity sha512-8/ObOWyBtwbe3/r9QbXMs+aKK2EgcYp2NiF4fm1xIO/c3aBMN5wBc2zUnl1lpHU71l70/OH5cxHbyDYoEgdMoA==
+  dependencies:
+    gl-mat4 "1.1.4"
+    gl-vec3 "1.0.3"
+
 "@next/env@13.0.3":
   version "13.0.3"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-13.0.3.tgz#f2ecec9a6634aed28dca9e7b79bd65d9c516a1b4"
@@ -2895,6 +2903,16 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
+gl-mat4@1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/gl-mat4/-/gl-mat4-1.1.4.tgz#1e895b55892e56a896867abd837d38f37a178086"
+  integrity sha512-3NrFjvQMNSITLncF5Xz7EqfzB3IZczfNuJ6+ZFf2ko8hKhKzp8UXrdaRWm3AvpoowKMtnFDE7YpV5uD9AIxltw==
+
+gl-vec3@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/gl-vec3/-/gl-vec3-1.0.3.tgz#110fd897d0729f6398307381567d0944941bf22b"
+  integrity sha512-B4cOpz3vpwRwkmjVsv+JKgBlPOFSLQApDAaUFrowXPgx6Y/SOhTmeciOKHvcFqls6DsGuZ+YHXo9Py5oVia7bA==
+
 glob-parent@^5.1.2, glob-parent@~5.1.2:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.2.tgz#869832c58034fe68a4093c17dc15e8340d8401c4"
@@ -4395,6 +4413,11 @@ react-loading-skeleton@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/react-loading-skeleton/-/react-loading-skeleton-3.1.0.tgz#ce22942f1af77bfd60854417075792367f54f41e"
   integrity sha512-j1U1CWWs68nBPOg7tkQqnlFcAMFF6oEK6MgqAo15f8A5p7mjH6xyKn2gHbkcimpwfO0VQXqxAswnSYVr8lWzjw==
+
+react-watching-you@^0.0.11:
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/react-watching-you/-/react-watching-you-0.0.11.tgz#2b9f49bde809774d78a164eb89a5f2ed9e01545b"
+  integrity sha512-+wE4PC1jDBoFkYpQOVU63gmLTNZbjEWj2cux15QZJNY6xTJtsto8oym1Ont4hPuWmxQx+XK7PcwSWaf1fOsXdA==
 
 react@18.2.0:
   version "18.2.0"

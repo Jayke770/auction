@@ -31,6 +31,7 @@
     "react-flatpickr": "^3.10.13",
     "react-icons": "^4.6.0",
     "react-loading-skeleton": "^3.1.0",
+    "react-watching-you": "^0.0.11",
     "sweetalert2": "^11.6.8",
     "sweetalert2-react-content": "^5.0.7",
     "swiper": "^8.4.4",

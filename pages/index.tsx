@@ -55,29 +55,40 @@ export default function Home() {
       {/* nav */}
       <ClientNavbar />
       {/* hero */}
-      {auctionsData ? (
-        auctionsData.length > 0 ? (
-          <Swiper
-            modules={[Navigation]}
-            className='mySwiper flex px-3 xl:px-40 !w-full !h-auto'
-            slidesPerView={1}
-            onBeforeInit={(swiper) => {
-              swiperRef.current = swiper
-            }}>
-            {auctionsData.map((auction, i) => (
-              <SwiperSlide key={i} >
-                <ClientAuctionCard
-                  next={next}
-                  prev={prev}
-                  auction={auction}
-                  length={auctionsData.length}
-                  index={i} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        ) : null
-      ) : <ClientAuctionLoader />
-      }
+      {active ? (
+        auctionsData ? (
+          auctionsData.length > 0 ? (
+            <Swiper
+              modules={[Navigation]}
+              className='mySwiper flex px-3 xl:px-40 !w-full !h-auto'
+              slidesPerView={1}
+              onBeforeInit={(swiper) => {
+                swiperRef.current = swiper
+              }}>
+              {auctionsData.map((auction, i) => (
+                <SwiperSlide key={i} >
+                  <ClientAuctionCard
+                    next={next}
+                    prev={prev}
+                    auction={auction}
+                    length={auctionsData.length}
+                    index={i} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : null
+        ) : <ClientAuctionLoader />
+      ) : (
+        <div className='w-full h-[calc(100vh-110px)] px-3 xl:px-40 flex justify-center items-center py-5 xl:py-10'>
+          <div className='flex flex-col gap-5 justify-center items-center'>
+            <img
+              alt='metamask'
+              src="/assets/icons/metamask.png"
+              className='h-52 w-full object-contain' />
+            <h1 className='text-xl font-teamdao text-teamdao-primary tracking-[.50rem] break-words'>Connect Your Wallet</h1>
+          </div>
+        </div>
+      )}
     </Page >
   )
 }
